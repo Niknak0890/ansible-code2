@@ -27,7 +27,7 @@
           state: touch
 
      - name: Start & Enable Docker Daemon
-       systemd_service: # or use service module
+       systemd: # or use service module
            name: docker
            state: started
            enabled: yes
