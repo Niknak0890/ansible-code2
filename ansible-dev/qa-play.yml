@@ -1,0 +1,36 @@
+---
+- hosts: ws
+  become: yes
+  become_user: root #option to become function as become = admin only
+  ignore_errors: yes 
+  tasks: 
+     - name: Install Packages
+       yum: # can use yum module or package module for aws linux
+         state: present
+         name: 
+           - docker
+           - wget
+           - lsof
+           - passwd
+           - unzip
+           - java-11*
+     
+     - name: Create Directory
+       file:
+          path: /opt/qa/spg
+          state: directory
+          mode: '0755' # add permission 
+
+     - name: Create Log File
+       file:
+          path: /opt/qa/spg/spg.log
+          state: touch
+
+     - name: Start & Enable Docker Daemon
+       systemd_service: # or use service module
+           name: docker
+           state: started
+           enabled: yes
+           
+
+
