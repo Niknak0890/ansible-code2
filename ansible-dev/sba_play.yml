@@ -1,0 +1,40 @@
+---
+- host: ws
+  become: yes
+  gather_facts: yes
+  ignore_errors: yes
+
+  tasks:
+   -name: Delete old artifact
+    file: 
+     path: /opt/qa/spg/*.jar
+     state: absent
+
+   -name: Check port 8082
+    shell: lsof -i :8082
+    register: pid_on_8082 
+
+   -name: Print the PID
+     debug:
+       var: pid_on_port.stdout
+  
+   -name: Euth Running App
+    shell: kill -9 pid_on_8082.stdout
+    when: pid_on_8082.stdout != '' #run command when not equal to anything
+
+   #-name: Create /opt/qa/spg directory
+   # file:
+   #   path: /opt/qa/spg
+    #  state: directory
+
+   -name: Download new artifact to /opt/qa/spg folder
+    get_url: 
+      url: http://34.201.161.49:8081/artifactory/geolocation/geo/bio_17.jar  
+      dest: /opt/qa/spg
+      url_username: admin
+      url_password: password
+
+   -name: Run SP App in the Background
+    shell: nohup java -jar /opt/qa/spg/*.jar > /opt/qa/spg.log 2>&1 &   
+     
+     
