@@ -19,7 +19,7 @@
        var: pid_on_port.stdout
   
    -name: Euth Running App
-    shell: kill -9 pid_on_8082.stdout
+    shell: "kill -9 {{ pid_output.stdout }}"
     when: pid_on_8082.stdout != '' #run command when not equal to anything
 
    #-name: Create /opt/qa/spg directory
